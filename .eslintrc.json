@@ -1,0 +1,19 @@
+
+    {
+        "env": {
+            "commonjs" : true,
+            "es2021" : true,
+            "node" : true,
+            "jest" : true
+        },
+        "extende": "eslint:recommended",
+        "overrides": [
+
+        ],
+        "parseOptions": {
+            "ecmaVersion": "latest"
+        },
+        "rules": {
+
+        }
+    }
