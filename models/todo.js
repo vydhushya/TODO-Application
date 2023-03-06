@@ -21,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
       return this.update({ completed:true})
     }
 
+    deleteTodo(){
+      return this.destroy()
+    }
+
   }
   TODO.init({
     title: DataTypes.STRING,

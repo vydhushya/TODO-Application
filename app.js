@@ -7,8 +7,16 @@ app.use(bodyParser.json());
 
 const { TODO } = require("./models")
 
-app.get("/todos", (request, response) => {
+app.get("/todos",async (request, response) => {
     console.log("Todo List")
+    try{
+        const alltodo = await TODO.findAll();
+        return response.json(alltodo);
+    }catch(error){
+        console.log(error)
+        return response.status(422).json(error)
+    }
+
 })
 
 app.post("/todos", async (request, response) => {
@@ -36,8 +44,16 @@ app.put("/todos/:id/markAsCompleted", async (request, response) => {
     }
 })
 
-app.delete("/todo/:id", (request, response) => {
-
+app.delete("/todos/:id", async(request, response) => {
+    console.log("Deleting a todo with ID: ", request.params.id)
+    const todo = await TODO.findByPk(request.params.id)
+    try{
+        await todo.deleteTodo()
+        return response.json({status:true})
+    } catch(error){
+        console.log(error)
+        return response.status(422).json(error)
+    }
 })
 
 module.exports = app;
