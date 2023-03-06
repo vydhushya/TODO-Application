@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css" />
+    <title>Document</title>
+</head>
+<body>
+    <%- include('header.ejs') %>
+    <h2>Overdue</h2>
+    <h4>
+        <%=
+        OverD.length
+        %>
+    </h4>
+    <h2>Due Today</h2>
+    <h4>
+        <%=
+        DToday.length
+        %>
+    </h4>
+    <h2>Due Later</h2>
+    <h4>
+        <%=
+        DLater.length
+        %>
+    </h4>
+</body>
+</html>

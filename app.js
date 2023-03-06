@@ -10,19 +10,31 @@ app.use(express.static(path.join(__dirname, "public")));
 
 const { TODO } = require("./models")
 
+var date = new Date();
+var rdate = date.toLocaleDateString("en-CA");
+
 app.set("view engine", "ejs");
 app.get("/",async(request,response) => {
-    const allTodos = await TODO.getTodos();
-    if(request.accepts("html")){
-        response.render('index',{
-            allTodos
+    TODO.findAll().then((todos) => {
+        var overDue = [];
+        var dueToday = [];
+        var dueLater = [];
+        todos.map(async (todo) => {
+          if (todo.dataValues.dueDate < rdate) {
+            await overDue.push(todo.dataValues);
+          } else if (todo.dataValues.dueDate > rdate) {
+            await dueToday.push(todo.dataValues);
+          } else {
+            await dueLater.push(todo.dataValues);
+          }
         });
-    }
-    else{
-        response.json({
-            allTodos
-    })
-    }
+        response.render("index", {
+          l: { todos },
+          OverD: overDue,
+          DLater: dueLater,
+          DToday: dueToday,
+        });
+      });
 });
 
 app.get("/todos",async (request, response) => {
