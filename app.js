@@ -28,12 +28,19 @@ app.get("/", async (request, response) => {
         await dueLater.push(todo.dataValues);
       }
     });
-    response.render("index", {
-      l: { todos },
-      OverD: overDue,
-      DLater: dueLater,
-      DToday: dueToday,
-    });
+
+
+    if(request.accepts("html")) {
+      response.render("index", {
+        l: { todos },
+        OverD: overDue,
+        DLater: dueLater,
+        DToday: dueToday,
+      });
+    }
+    
+
+    
   });
 });
 
@@ -78,10 +85,10 @@ app.put("/todos/:id/markAsCompleted", async (request, response) => {
 
 app.delete("/todos/:id", async (request, response) => {
   console.log("Deleting a todo with ID: ", request.params.id);
-  const todo = await TODO.findByPk(request.params.id);
+  
   try {
-    await todo.deleteTodo();
-    return response.json({ status: true });
+    await TODO.deleteTodo(request.params.id);
+    return response.json({ success: true });
   } catch (error) {
     console.log(error);
     return response.status(422).json(error);

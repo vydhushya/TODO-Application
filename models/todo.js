@@ -19,14 +19,21 @@ module.exports = (sequelize, DataTypes) => {
       return this.create({ title: title, dueDate: dueDate, completed: false });
     }
 
-    markAsCompleted() {
+   
+ static markAsCompleted() {
       return this.update({ completed: true });
-    }
+    };
+      
+    
 
-    deleteTodo() {
-      return this.destroy();
-    }
+    static deleteTodo(id) {
+      return this.destroy({
+        where: {
+          id,
+        }
+      });
   }
+}
   TODO.init(
     {
       title: DataTypes.STRING,
