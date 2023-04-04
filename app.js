@@ -38,6 +38,14 @@ app.get("/", async (request, response) => {
         DToday: dueToday,
       });
     }
+    else{
+      response.json({
+        l: { todos },
+        OverD: overDue,
+        DLater: dueLater,
+        DToday: dueToday,
+      })
+    }
     
 
     
