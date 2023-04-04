@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
-
+var csrf = require("csurf");
+app.use(csrf({ cookie: true }));
+var cookieParser = require("cookie-parser");
+app.use(cookieParser("shh! some secret string"));
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(express.urlencoded({ encoded: false }));
@@ -36,6 +39,7 @@ app.get("/", async (request, response) => {
         OverD: overDue,
         DLater: dueLater,
         DToday: dueToday,
+        csrfToken:request.csrfToken(),
       });
     }
     else{
