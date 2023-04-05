@@ -23,6 +23,7 @@ var rdate = date.toLocaleDateString("en-CA");
 
 app.set("view engine", "ejs");
 app.get("/", async (request, response) => {
+  var completed = await TODO.completed();
   TODO.findAll().then((todos) => {
     var overDue = [];
     var dueToday = [];
@@ -30,11 +31,14 @@ app.get("/", async (request, response) => {
     todos.map(async (todo) => {
       if (todo.dataValues.dueDate < rdate) {
         await overDue.push(todo.dataValues);
+        
       } else if (todo.dataValues.dueDate == rdate) {
         await dueToday.push(todo.dataValues);
+        await dueToday.pop(completed);
       } else {
         await dueLater.push(todo.dataValues);
       }
+      completed.push(TODO.completed);
     });
 
 
@@ -44,6 +48,7 @@ app.get("/", async (request, response) => {
         OverD: overDue,
         DLater: dueLater,
         DToday: dueToday,
+        completed : completed,
         csrfToken : request.csrfToken(),
       });
     }
@@ -53,6 +58,7 @@ app.get("/", async (request, response) => {
         OverD: overDue,
         DLater: dueLater,
         DToday: dueToday,
+        completed: completed,
         csrfToken : request.csrfToken(),
       })
     }

@@ -19,6 +19,14 @@ module.exports = (sequelize, DataTypes) => {
       return this.create({ title: title, dueDate: dueDate, completed: false });
     }
 
+    static completed() {
+      const complete =this.findAll({
+        where:{
+          completed:true,
+        }
+      });
+      return complete;
+    }
     
       markAsCompleted() {
       return this.update(
@@ -26,9 +34,9 @@ module.exports = (sequelize, DataTypes) => {
       );
     };
 
-    setCompletionStatus(status) {
+    setCompletionStatus(tf) {
       return this.update(
-        { completed: status}
+        { completed: tf}
       );
     };
       
