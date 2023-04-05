@@ -1,13 +1,17 @@
 const express = require("express");
-const app = express();
-var cookieParser = require("cookie-parser");
-app.use(cookieParser("shh! some secret string"));
 var csrf = require("csurf");
-app.use(csrf({ cookie: true }));
+const app = express();
+
+
+
 
 const bodyParser = require("body-parser");
+var cookieParser = require("cookie-parser");
 app.use(bodyParser.json());
 app.use(express.urlencoded({ encoded: false }));
+app.use(cookieParser("shh! some secret string"));
+
+app.use(csrf({ cookie: true }));
 
 const path = require("path");
 app.use(express.static(path.join(__dirname, "public")));
@@ -49,6 +53,7 @@ app.get("/", async (request, response) => {
         OverD: overDue,
         DLater: dueLater,
         DToday: dueToday,
+        csrfToken : request.csrfToken(),
       })
     }
     
