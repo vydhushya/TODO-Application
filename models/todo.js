@@ -19,10 +19,17 @@ module.exports = (sequelize, DataTypes) => {
       return this.create({ title: title, dueDate: dueDate, completed: false });
     }
 
-   
+    
       markAsCompleted() {
-      return this.update({ completed: true}
-        );
+      return this.update(
+        { completed: true}
+      );
+    };
+
+    setCompletionStatus(status) {
+      return this.update(
+        { completed: status}
+      );
     };
       
     

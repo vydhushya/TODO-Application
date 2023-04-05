@@ -1,5 +1,5 @@
 const express = require("express");
-var csrf = require("csurf");
+var csrf = require("tiny-csrf");
 const app = express();
 
 
@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({ encoded: false }));
 app.use(cookieParser("shh! some secret string"));
 
-app.use(csrf({ cookie: true }));
+app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
 
 const path = require("path");
 app.use(express.static(path.join(__dirname, "public")));
@@ -88,18 +88,20 @@ app.post("/todos", async (request, response) => {
   }
 });
 
-app.put("/todos/:id/markAsCompleted", async (request, response) => {
+app.put("/todos/:id/", async (request, response) => {
   console.log("We have to update a todo with ID: ", request.params.id);
   const todo = await TODO.findByPk(request.params.id);
 
   try {
-    const updatedTodo = await todo.markAsCompleted();
+    const updatedTodo = await todo.setCompletionStatus(request.body.completed);
     return response.json(updatedTodo);
   } catch (error) {
     console.log(error);
     return response.status(422).json(error);
   }
 });
+
+
 
 app.delete("/todos/:id", async (request, response) => {
   console.log("Deleting a todo with ID: ", request.params.id);
