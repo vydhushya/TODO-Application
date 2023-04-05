@@ -29,19 +29,18 @@ app.get("/", async (request, response) => {
     var dueToday = [];
     var dueLater = [];
     todos.map(async (todo) => {
-      if (todo.dataValues.dueDate < rdate) {
+      if (todo.dataValues.dueDate < rdate && todo.dataValues.completed==false ) {
         await overDue.push(todo.dataValues);
-        
-      } else if (todo.dataValues.dueDate == rdate) {
+      } else if (todo.dataValues.dueDate === rdate && todo.dataValues.completed===false) {
         await dueToday.push(todo.dataValues);
-        await dueToday.pop(completed);
-      } else {
+        
+      } else if(todo.dataValues.dueDate > rdate && todo.dataValues.completed==false ) {
         await dueLater.push(todo.dataValues);
       }
-      completed.push(TODO.completed);
+      
     });
 
-
+    
     if(request.accepts("html")) {
       response.render("index", {
         l: { todos },
