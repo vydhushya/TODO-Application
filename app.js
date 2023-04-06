@@ -25,6 +25,8 @@ app.use(session({
   }
 }));
 
+
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -130,6 +132,13 @@ app.post("/session", passport.authenticate('local', {failureRedirect: "/login"})
   response.redirect("/todos");
 })
 
+app.get("/signout", (request, response, next) => {
+  request.logout((err) => {
+    if(err) { return next(err); }
+    response.redirect("/");
+  })
+})
+
 app.post("/users", async(request, response) => {
   //hash password using bcrypt
   const hashedPwd =await bcrypt.hash(request.body.password, saltRounds)
@@ -154,7 +163,7 @@ app.post("/users", async(request, response) => {
   
 })
 
-app.get("/todos", async (request, response) => {
+app.get("/todos",connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
   console.log("Todo List");
   try {
     const alltodo = await TODO.findAll();
@@ -165,7 +174,7 @@ app.get("/todos", async (request, response) => {
   }
 });
 
-app.post("/todos", async (request, response) => {
+app.post("/todos",connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
   console.log("Creating a todo", request.body);
 
   try {
@@ -180,7 +189,7 @@ app.post("/todos", async (request, response) => {
   }
 });
 
-app.put("/todos/:id/", async (request, response) => {
+app.put("/todos/:id/",connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
   console.log("We have to update a todo with ID: ", request.params.id);
   const todo = await TODO.findByPk(request.params.id);
 
@@ -195,7 +204,7 @@ app.put("/todos/:id/", async (request, response) => {
 
 
 
-app.delete("/todos/:id", async (request, response) => {
+app.delete("/todos/:id",connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
   console.log("Deleting a todo with ID: ", request.params.id);
   
   try {
