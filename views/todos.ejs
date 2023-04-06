@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>" />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <title>TO-DO Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      var token = document
+          .querySelector('meta[name="csrf-token"]')
+          .getAttribute("content");
+      function updateTodo(id, status) {
+        fetch(`/todos/${id}`, {
+          method: "put",
+          headers: { "Content-Type": "application/json"},
+          body: JSON.stringify({
+            completed: !status,
+            "_csrf": token
+          })
+        })
+        .then((res) => {
+          if(res.ok){
+          window.location.reload();
+          }
+        })
+        .catch((err) => console.error(err));
+      }
+
+      
+
+      function deleteTodo(id) {
+        fetch(`/todos/${id}`, {
+          method: "delete",
+          headers: { "Content-Type": "application/json"},
+          body: JSON.stringify({
+            "_csrf": token
+          })
+        })
+        .then((res) => {
+          if(res.ok){
+          window.location.reload();
+          }
+        })
+        .catch((err) => console.error(err));
+      }
+    </script>
+</head>
+<body>
+    <div class="grid grid-cols-6">
+        <div class="col-start-3 col-span-2">
+          <%- include('header.ejs') %>
+          
+      <form action="/todos" method="post">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+        <div class="flex gap-2 py-4">
+          <div class="flex-auto w-64">
+            <input type="text" name="title" class="border border-gray-300 text-gray-900 text-sm rounded w-full p-2" placeholder="What's next?" autofocus required>
+          </div>
+          <div class="flex-auto w-32">
+            <input type="date" name="dueDate" class="border border-gray-300 text-gray-900 text-sm rounded w-full p-2 leading-4	" required>
+          </div>
+          <div class="flex-none">
+            <button type="submit" class="text-white bg-green-600 hover:bg-green-700 font-medium rounded text-sm px-5 py-2 mr-2 mb-2">Add</button>
+          </div>            
+        </div>
+      </form>
+      <div>
+      <%- include('todo.ejs') %>
+        </div>
+        </div>
+        </div>
+    
+</body>
+</html>
