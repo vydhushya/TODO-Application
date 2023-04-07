@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       TODO.belongsTo(models.User, {
-        foreignKey:'userId'
-      })
+        foreignKey: "userId",
+      });
       // define association here
     }
 
@@ -18,41 +18,42 @@ module.exports = (sequelize, DataTypes) => {
       return this.findAll();
     }
 
-    static addTodo({ title, dueDate }) {
-      return this.create({ title: title, dueDate: dueDate, completed: false });
+    static addTodo({ title, dueDate, userId }) {
+      return this.create({
+        title: title,
+        dueDate: dueDate,
+        completed: false,
+        userId,
+      });
     }
 
-    static completed() {
-      const complete =this.findAll({
-        where:{
-          completed:true,
-        }
+    static completed(userId) {
+      const complete = this.findAll({
+        where: {
+          completed: true,
+          userId,
+        },
       });
       return complete;
     }
-    
-      markAsCompleted() {
-      return this.update(
-        { completed: true}
-      );
-    };
+
+    markAsCompleted(userId) {
+      return this.update({ completed: true, userId });
+    }
 
     setCompletionStatus(tf) {
-      return this.update(
-        { completed: tf}
-      );
-    };
-      
-    
+      return this.update({ completed: tf });
+    }
 
-    static deleteTodo(id) {
+    static deleteTodo(id, userId) {
       return this.destroy({
         where: {
           id,
-        }
+          userId,
+        },
       });
+    }
   }
-}
   TODO.init(
     {
       title: DataTypes.STRING,
