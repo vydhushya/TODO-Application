@@ -1,13 +1,19 @@
 const express = require("express");
 var csrf = require("tiny-csrf");
 const app = express();
+
+const flash = require("connect-flash");
+const path = require("path");
+app.set("views", path.join(__dirname, "views"));
+app.use(flash());
+
 const bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 app.use(bodyParser.json());
 app.use(express.urlencoded({ encoded: false }));
 app.use(cookieParser("shh! some secret string"));
 app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
-const path = require("path");
+
 app.use(express.static(path.join(__dirname, "public")));
 
 const passport = require("passport");
@@ -27,6 +33,11 @@ app.use(
   })
 );
 
+app.use(function(request, response, next) {
+  response.locals.messages = request.flash();
+  next();
+});
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -40,11 +51,12 @@ passport.use(
       User.findOne({ where: { email: username } })
         .then(async (user) => {
           const result = await bcrypt.compare(password, user.password);
-          if (result) {
+          if(result ) {
             return done(null, user);
           } else {
-            return done("Invalid Password");
+            return done(null, false, { message: "Invalid Password"});
           }
+          
         })
         .catch((error) => {
           return done(error);
@@ -149,12 +161,10 @@ app.get("/login", (request, response) => {
 
 app.post(
   "/session",
-  passport.authenticate("local", { failureRedirect: "/login" }),
-  (request, response) => {
+  passport.authenticate("local", {failureRedirect: "/login",failureFlash: true,}),(request, response) => {
     console.log(request.user);
     response.redirect("/todos");
-  }
-);
+});
 
 app.get("/signout", (request, response, next) => {
   request.logout((err) => {
@@ -166,6 +176,18 @@ app.get("/signout", (request, response, next) => {
 });
 
 app.post("/users", async (request, response) => {
+  if(request.body.firstName.length==0){
+    request.flash("Please enter First Name");
+    return response.redirect("/signup")
+  }
+  if(request.body.email.length===0){
+    request.flash("Please enter an email");
+    return response.redirect("/signup")
+  }
+  if(request.body.password.length===0){
+    request.flash("Please enter a password");
+    return response.redirect("/signup")
+  }
   //hash password using bcrypt
   const hashedPwd = await bcrypt.hash(request.body.password, saltRounds);
   console.log(hashedPwd);
@@ -208,6 +230,15 @@ app.post(
   async (request, response) => {
     console.log("Creating a todo", request.body);
     console.log(request.user);
+    if(request.body.title.length == 0){
+      request.flash("Enter a valid title Title");
+      return response.redirect("/todos")
+    }
+    
+    if(request.body.dueDate.length == 0){
+      request.flash("Enter a valid DueDate");
+      return response.redirect("/todos")
+    }
     try {
       await TODO.addTodo({
         title: request.body.title,

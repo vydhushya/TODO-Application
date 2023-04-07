@@ -56,9 +56,24 @@ module.exports = (sequelize, DataTypes) => {
   }
   TODO.init(
     {
-      title: DataTypes.STRING,
-      dueDate: DataTypes.DATEONLY,
-      completed: DataTypes.BOOLEAN,
+      title: {
+        type:DataTypes.STRING,
+        allowNull: false,
+        validate:{
+          notNull:true,
+        },
+      },
+      dueDate: {
+        type: DataTypes.DATEONLY,
+        allowNull:false,
+        validate:{
+          notNull:true,
+        }
+      },
+      completed: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
     },
     {
       sequelize,
