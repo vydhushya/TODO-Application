@@ -103,6 +103,8 @@ app.get(
       var overDue = [];
       var dueToday = [];
       var dueLater = [];
+     
+      
       todos.map(async (todo) => {
         if (
           todo.dataValues.dueDate < rdate &&
@@ -139,6 +141,7 @@ app.get(
           OverD: overDue,
           DLater: dueLater,
           DToday: dueToday,
+          
           completed: completed,
           csrfToken: request.csrfToken(),
         });
@@ -234,7 +237,10 @@ app.post(
       request.flash("Enter a valid title Title");
       return response.redirect("/todos")
     }
-    
+    if(request.body.dueTime.length == 0){
+      request.flash("Enter a valid DueTime");
+      return response.redirect("/todos")
+    }
     if(request.body.dueDate.length == 0){
       request.flash("Enter a valid DueDate");
       return response.redirect("/todos")
@@ -244,6 +250,7 @@ app.post(
         title: request.body.title,
         dueDate: request.body.dueDate,
         userId: request.user.id,
+        dueTime: request.body.dueTime,
       });
       return response.redirect("/todos");
     } catch (error) {

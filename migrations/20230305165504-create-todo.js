@@ -26,6 +26,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
+      dueTime: {
+        type: Sequelize.TIME,
+      }
     });
   },
   async down(queryInterface, Sequelize) {

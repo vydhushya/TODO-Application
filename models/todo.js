@@ -18,10 +18,11 @@ module.exports = (sequelize, DataTypes) => {
       return this.findAll();
     }
 
-    static addTodo({ title, dueDate, userId }) {
+    static addTodo({ title, dueDate, userId , dueTime}) {
       return this.create({
         title: title,
         dueDate: dueDate,
+        dueTime: dueTime,
         completed: false,
         userId,
       });
@@ -65,6 +66,13 @@ module.exports = (sequelize, DataTypes) => {
       },
       dueDate: {
         type: DataTypes.DATEONLY,
+        allowNull:false,
+        validate:{
+          notNull:true,
+        }
+      },
+      dueTime: {
+        type: DataTypes.TIME,
         allowNull:false,
         validate:{
           notNull:true,
